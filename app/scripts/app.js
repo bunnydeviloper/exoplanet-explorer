@@ -4,7 +4,7 @@ Instructions:
   (a) Resolve on load and reject on error.
 (2) If the XHR resolves, use addSearchHeader to add the search header to the page.
 (3) If the XHR fails, console.log the error and pass 'unknown' to addSearchHeader
- */
+*/
 
 // Inline configuration for jshint below. Prevents `gulp jshint` from failing with quiz starter code.
 /* jshint unused: false */
@@ -33,25 +33,30 @@ Instructions:
    * @return {Promise}    - A Promise that resolves when the XHR succeeds and fails otherwise.
    */
   function get(url) {
-    /*
+    return new Promise(function(resolve, reject) {
+      /*
     This code needs to get wrapped in a Promise!
-     */
-    var req = new XMLHttpRequest();
-    req.open('GET', url);
-    req.onload = function() {
-      if (req.status === 200) {
-        // It worked!
-        // You'll want to resolve with the data from req.response
-      } else {
+    */
+      var req = new XMLHttpRequest();
+      req.open('GET', url);
+      req.onload = function() {
+        if (req.status === 200) {
+          // It worked!
+          // You'll want to resolve with the data from req.response
+          resolve(req.response);
+        } else {
+          // It failed :(
+          // Be nice and reject with req.statusText
+          reject(Error(req.statusText));
+        }
+      };
+      req.onerror = function() {
         // It failed :(
-        // Be nice and reject with req.statusText
-      }
-    };
-    req.onerror = function() {
-      // It failed :(
-      // Pass a 'Network Error' to reject
-    };
-    req.send();
+        // Pass a 'Network Error' to reject
+        reject(Error('Network Error'));
+      };
+      req.send();
+    });
   }
 
   window.addEventListener('WebComponentsReady', function() {
@@ -60,7 +65,15 @@ Instructions:
     Uncomment the next line you're ready to start chaining and testing!
     You'll need to add a .then and a .catch. Pass the response to addSearchHeader on resolve or
     pass 'unknown' to addSearchHeader if it rejects.
-     */
-    // get('../data/earth-like-results.json')
+    */
+    get('../data/earth-like-results.json')
+    // get('http://udacity.github.io/exoplanet-explorer/site/app/data/earth-like-results.json')
+    .then(function(response) {
+      addSearchHeader(response);
+    })
+    .catch(function(error) {
+      addSearchHeader('unknown');
+      console.log(error);
+    });
   });
 })(document);
