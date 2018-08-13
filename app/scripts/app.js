@@ -35,6 +35,8 @@ Instructions:
 
     Your code goes here!
      */
+    return fetch(url, { method: 'get' });
+    // NOTE: it's okay if you don't specify the method, fetch will assume it's a get request
   }
 
   /**
@@ -48,6 +50,9 @@ Instructions:
 
     Your code goes here!
      */
+    return get(url).then(function(response) {
+      return response.json(); // this is the same as JSON.parse
+    });
   }
 
   window.addEventListener('WebComponentsReady', function() {
@@ -58,6 +63,19 @@ Instructions:
 
     Your code goes here too!
      */
-    // getJSON('../data/earth-like-results.json')
+    getJSON('../data/earth-like-results.json')
+    // getJSON('http://udacity.github.io/exoplanet-explorer/site/app/data/earth-like-results.json')
+    .then(function(response) {
+      addSearchHeader(response.query);
+      console.log(response);
+      return response.results[0];
+    })
+    .then(function(url) {
+      console.log(url);
+    })
+    .catch(function(error) {
+      addSearchHeader('unknown');
+      console.log(error);
+    });
   });
 })(document);
