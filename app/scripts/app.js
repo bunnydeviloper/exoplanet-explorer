@@ -5,7 +5,7 @@ Instructions:
 (3) Handle errors!
   (a) Pass 'unknown' to the search header.
   (b) console.log the error.
- */
+  */
 
 // Inline configuration for jshint below. Prevents `gulp jshint` from failing with quiz starter code.
 /* jshint unused: false */
@@ -63,7 +63,21 @@ Instructions:
     Uncomment the next line and start here when you're ready to add the first thumbnail!
 
     Your code goes here!
-     */
-    // getJSON('../data/earth-like-results.json')
+    */
+    getJSON('../data/earth-like-results.json')
+      .then(function(response) {
+        addSearchHeader(response.query);
+        return getJSON(response.results[0]);
+      })
+      .catch(function() {
+        throw Error('Search Request Error');
+      })
+      .then(function(planetData) {
+        createPlanetThumb(planetData);
+      })
+      .catch(function(e) {
+        addSearchHeader('unknown');
+        console.log(e);
+      });
   });
 })(document);
