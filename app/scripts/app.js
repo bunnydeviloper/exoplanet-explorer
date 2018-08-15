@@ -64,9 +64,19 @@ Instructions:
      */
     getJSON('../data/earth-like-results.json')
     .then(function(response) {
+      // each promise must wait for the Promise before it to resolve b4 executing
+      // that means each 'getJSON' must wait for the one b4 to succeed, then executed
+      var sequence = Promise.resolve();
+
       response.results.forEach(function(url) {
-        getJSON(url).then(createPlanetThumb);
+        sequence = sequence.then(function() {
+          return getJSON(url);
+        })
+        .then(createPlanetThumb);
       });
+    })
+    .catch(function(e) {
+      console.log(e);
     });
   });
 })(document);
